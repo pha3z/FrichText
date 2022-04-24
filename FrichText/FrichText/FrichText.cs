@@ -12,16 +12,9 @@ namespace Pha3z.FrichText
 
         public static FrichText ParseFrichText(string frichText, int start = 0, int length = 0 )
         {
-            //TODO: Change this to a local implementation of FastList (copy into this library and namespace)
             RefList<TextSpan> spans = new RefList<TextSpan>((frichText.Length / 20) + 4);
-            string s = frichText;
-            for (int i = 0; i < length - 1; i++)
-            {
-                if(s[i] == '[' && s[i] != '[')
-                {
-                    i = ParseSpanToken(frichText, i, spans);
-                }
-            }
+
+            DoRecursiveParse(frichText, spans, iToken: 0, start, length);
 
             return new FrichText()
             {
@@ -30,18 +23,46 @@ namespace Pha3z.FrichText
             };
         }
 
+        public static void DoRecursiveParse(string txt, RefList<TextSpan> spans, int iToken, int position, int stopParsingAt)
+        {
+            for (int i = position; i < stopParsingAt - 1; i++)
+            {
+                if (txt[i] == '[' && txt[i] != '[')
+                {
+                    //Check if this is a closing token
+                    if (txt[i + 1] == '/' || txt[i + 2] == '/') //Allow pattern: [/] or [ /].  Just because we don't want to create grief because of one extra space.
+                    {
+                        ref TextSpan spanToClose = ref spans[iToken];
+                        spanToClose.ClosingTokenStart = (short)i;
+                        spanToClose.ClosingTokenLength = (byte)(FindNextClosingBracket(txt, i) - i + 1);
+                        iToken++;
+                    }
+                    else
+                    {
+                        i = ParseSpanToken(txt, i, spans);
+                        DoRecursiveParse(txt, spans, iToken + 1, i, stopParsingAt);
+                    }
+                }
+            }
+        }
+
+        /// <summary></summary>
+        /// <returns>The closing bracket position.</returns>
         public static int ParseSpanToken(string frichText, int openingBracketPos, RefList<TextSpan> spans)
         {
             string txt = frichText;
             int i = openingBracketPos + 1;
             ref TextSpan s = ref spans.AddByRef();
 
-            s.Start = openingBracketPos;
+            s.OpeningTokenStart = (short)openingBracketPos;
 
             while(i < txt.Length - 2 && txt[i] != ']')
             {
+                if (txt[i] == ' ')
+                    continue; //skip whitespace
+
                 if (txt[i] == ']')
-                    return i +1;
+                    return i + 1;
                 else if (txt[i] == 'b')
                     s.StyleFlags |= TextStyleFlags.Bold;
                 else if (txt[i] == 'i')
@@ -50,9 +71,15 @@ namespace Pha3z.FrichText
                     s.StyleFlags |= TextStyleFlags.Underline;
                 else if (txt[i] == 'p')
                     s.StyleFlags |= TextStyleFlags.ParagraphStart;
+                else if (txt[i] == 'f')
+                {
+                    int eon = FindEndOfNumber(txt, i + 1);
+                    s.FontIndex = (byte)IntParser.ParseInt(txt, i, eon);
+                    i = eon;
+                }
                 else if (txt[i] == 'k')
                 {
-                    int eon = FindEndOfNumber(txt, i + 2);
+                    int eon = FindEndOfNumber(txt, i + 1);
                     s.Kerning = (byte)IntParser.ParseInt(txt, i, eon);
                     i = eon;
                 }
@@ -62,7 +89,12 @@ namespace Pha3z.FrichText
                     s.LineHeight = (byte)IntParser.ParseInt(txt, i, eon);
                     i = eon;
                 }
-                else if (Char.IsDigit(txt[i]))
+                else if (!Char.IsDigit(txt[i]))
+                {
+                    if (txt[i] != ' ' && txt[i] != ']')
+                        throw new FrichTextException("Encountered unexpected character after text: ");
+                }
+                else
                 {
                     //A number preceeded by a space or appearing immediately at start of span marker should be intrepretted as font size.
                     int eon = FindEndOfNumber(txt, i);
@@ -75,7 +107,22 @@ namespace Pha3z.FrichText
                     throw new FrichTextException("Encountered unexpected character after text: ");
             }
 
-            s.Length = i - s.Start;
+            s.OpeningTokenLength = (byte)(i - s.OpeningTokenStart + 1);
+            return i;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FindNextClosingBracket(string txt, int openingBracket)
+        {
+            int i = openingBracket + 2;
+            while (txt[i] != ']')
+            {
+                i++;
+
+                if (i == txt.Length)
+                    throw new FrichTextException("Encountered format token without a terminating bracket, beginning with text: ");
+            }
+
             return i;
         }
 

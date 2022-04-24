@@ -4,12 +4,10 @@ namespace Pha3z.FrichText
 {
     public struct TextSpan
     {
-        public TextStyleFlags StyleFlags;
-
         /// <summary>
         /// Index to a font in an array of fonts associated with the whole text.
         /// </summary>
-        byte FontIndex;
+        public byte FontIndex;
 
         public byte LineHeight;
         public byte FontSize;
@@ -20,14 +18,22 @@ namespace Pha3z.FrichText
         public byte Kerning;
 
         /// <summary>
-        /// The opening bracket position in original text
+        /// OpeningTokenStart + OpeningTokenLength maps to the closing bracket position of opening span token in original text
         /// </summary>
-        public int Start;
+        public byte OpeningTokenLength;
+
+        public byte ClosingTokenLength;
+
+        public TextStyleFlags StyleFlags;
 
         /// <summary>
-        /// STart + Length maps to the closing bracket position in original text
+        /// The opening bracket position of the opening span token in origina ltext
         /// </summary>
-        public int Length;
-   
+        public short OpeningTokenStart;
+
+        public short ClosingTokenStart;        
+
+        public short InnerTextFirstCharIdx() => (short)(OpeningTokenStart + OpeningTokenLength + 1);
+        public short InnerTextLastCharIdx() => (short)(ClosingTokenStart - 1);
     }
 }
