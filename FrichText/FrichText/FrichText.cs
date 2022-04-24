@@ -7,14 +7,13 @@ namespace Pha3z.FrichText
 {
     public class FrichText
     {
-        public TextSpan[] TextSpans { get; set; }
-        public string Text { get; set; }
-
+        public TextSpan[] TextSpans { get; private set; }
+        public string Text { get; private set; }
 
         public static FrichText ParseFrichText(string frichText, int start = 0, int length = 0 )
         {
             //TODO: Change this to a local implementation of FastList (copy into this library and namespace)
-            List<TextSpan> spans = new List<TextSpan>();
+            RefList<TextSpan> spans = new RefList<TextSpan>((frichText.Length / 20) + 4);
             string s = frichText;
             for (int i = 0; i < length - 1; i++)
             {
@@ -23,15 +22,21 @@ namespace Pha3z.FrichText
                     i = ParseSpanToken(frichText, i, spans);
                 }
             }
+
+            return new FrichText()
+            {
+                Text = frichText,
+                TextSpans = spans.Items
+            };
         }
 
-        public static int ParseSpanToken(string frichText, int openingBracketPos, List<TextSpan> spans)
+        public static int ParseSpanToken(string frichText, int openingBracketPos, RefList<TextSpan> spans)
         {
             string txt = frichText;
             int i = openingBracketPos + 1;
-            TextSpan s = spans.Add();
+            ref TextSpan s = ref spans.AddByRef();
 
-            while(i < txt.Length - 1)
+            while(i < txt.Length - 1 && txt[i] != ']')
             {
                 if (txt[i] == ']')
                     return i +1;
@@ -67,6 +72,8 @@ namespace Pha3z.FrichText
                 if (txt[i] != ' ' && txt[i] != ']')
                     throw new FrichTextException("Encountered unexpected character after text: ");
             }
+
+            return i;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

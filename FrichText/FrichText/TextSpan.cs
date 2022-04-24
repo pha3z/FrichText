@@ -21,7 +21,6 @@ namespace Pha3z.FrichText
 
         public int Start;
         public int Length;
-
-        
+   
     }
 }
