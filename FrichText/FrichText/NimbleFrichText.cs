@@ -107,7 +107,7 @@ namespace Pha3z.FrichText
                 else if (txt[i] == '#')
                 {
                     cmd.Kind = FrichTextCmdKind.Color;
-                    cmd.Text = IntParser.ParseFromMagicHex(txt, i + 1, 6);
+                    cmd.Value = IntParser.ParseFromMagicHex(txt, i + 1, 6);
                     i = i + 6;
                 }
                 else if (txt[i] == 'f')
