@@ -46,22 +46,20 @@ namespace Pha3z.FrichText
                 else if (txt[i] == 'k')
                 {
                     int eon = FindEndOfNumber(txt, i + 2);
-
-                    s.Kerning = int.TryParse()
+                    s.Kerning = (byte)IntParser.ParseInt(txt, i, eon);
                     i = eon;
                 }
                 else if (txt[i] == 'l' && txt[i + 1] == 'h')
                 {
                     int eon = FindEndOfNumber(txt, i + 2);
-
-                    s.LineHeight = //do fast parse of substring here
+                    s.LineHeight = (byte)IntParser.ParseInt(txt, i, eon);
                     i = eon;
                 }
                 else if (Char.IsDigit(txt[i]))
                 {
                     //A number preceeded by a space or appearing immediately at start of span marker should be intrepretted as font size.
                     int eon = FindEndOfNumber(txt, i);
-                    s.FontSize = //do fast parse of substring here.
+                    s.FontSize = (byte)IntParser.ParseInt(txt, i, eon);
                     i = eon;
                 }
 
