@@ -55,7 +55,7 @@ namespace Pha3z.FrichText
                     {
                         i++;
                         if (i == stopParsingAt)
-                            throw new FrichTextException("Text ends with an unterminated format token.");
+                            Ex.Throw("Text ends with an unterminated format token.");
                     }
 
                     //Check if this is a closing token
@@ -134,7 +134,7 @@ namespace Pha3z.FrichText
                 else if (!Char.IsDigit(txt[i]))
                 {
                     if (txt[i] != ' ' && txt[i] != ']')
-                        throw new FrichTextException("Encountered unexpected character after text: ");
+                        Ex.Throw("Encountered unexpected character after text: ");
                 }
                 else
                 {
@@ -147,7 +147,7 @@ namespace Pha3z.FrichText
 
                 i++;
                 if (txt[i] != ' ' && txt[i] != ']')
-                    throw new FrichTextException("Encountered unexpected character after text: ");
+                    Ex.Throw("Encountered unexpected character after text: ");
             }
 
             return i + 1;
@@ -162,7 +162,7 @@ namespace Pha3z.FrichText
                 i++;
 
                 if (i == txt.Length)
-                    throw new FrichTextException("Encountered format token without a terminating bracket, beginning with text: ");
+                    Ex.Throw("Encountered format token without a terminating bracket, beginning with text: ");
             }
 
             return i;
@@ -176,7 +176,7 @@ namespace Pha3z.FrichText
                 numberPos++;
 
             if (!Char.IsDigit(txt[numberPos]))
-                throw new FrichTextException("Expected a number value for after the following text: ");
+                Ex.Throw("Expected a number value for after the following text: ");
 
             int valueTerminator = numberPos + 1;
             while (valueTerminator < valueTerminator + 2)
@@ -187,7 +187,7 @@ namespace Pha3z.FrichText
             }
 
             if (Char.IsDigit(txt[valueTerminator]))
-                throw new FrichTextException($"Maximum value is 999. Encountered invalid value in the following text: ");
+                Ex.Throw($"Maximum value is 999. Encountered invalid value in the following text: ");
 
             return valueTerminator - 1;
         }
