@@ -9,11 +9,11 @@ A FrichText string looks like the following (new-lines have been added clarity, 
 
 &gt;&gt;&gt;font 3: 'yet another font'
 
-&gt;&gt;&gt;fs: 32
+&gt;&gt;&gt;fs: 12
 
-&gt;&gt;&gt;lh: 48
+&gt;&gt;&gt;lh: 18
 
-This is some text. [b u]This text is bold and underlined. [k110]This text is bold and underlined with adjusted kerning.[/][/]
+This is some text. [b u]This text is bold and underlined. [k110]This text is bold and underlined with adjusted kerning.[/][48 lh72]This text is font-size 48 with line-height of 72.[/][/]
 
 ## Why?
 
