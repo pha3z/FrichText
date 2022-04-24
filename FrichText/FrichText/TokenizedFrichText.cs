@@ -5,18 +5,21 @@ using System.Text;
 
 namespace Pha3z.FrichText
 {
-    public class FrichText
+    /// <summary>
+    /// Tokenized text stores one string for the entire plain text and a collection of TextSpans to indicate formatting for spans of text.
+    /// </summary>
+    public class TokenizedFrichText
     {
         public TextSpan[] TextSpans { get; private set; }
         public string Text { get; private set; }
 
-        public static FrichText ParseFrichText(string frichText, int start = 0, int length = 0 )
+        public static TokenizedFrichText ParseFrichText(string frichText, int start = 0, int length = 0 )
         {
             RefList<TextSpan> spans = new RefList<TextSpan>((frichText.Length / 20) + 4);
 
             DoRecursiveParse(frichText, spans, iToken: 0, start, length);
 
-            return new FrichText()
+            return new TokenizedFrichText()
             {
                 Text = frichText,
                 TextSpans = spans.Items
@@ -25,6 +28,8 @@ namespace Pha3z.FrichText
 
         static void DoRecursiveParse(string txt, RefList<TextSpan> spans, int iToken, int position, int stopParsingAt)
         {
+            throw new NotImplementedException("This implementation is buggy. See the NimbleFrichText class for a correct algorithm and use it to update this one if you need this variation.");
+
             for (int i = position; i < stopParsingAt - 1; i++)
             {
                 if (txt[i] == '[' && txt[i] != '[')
