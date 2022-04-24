@@ -23,7 +23,7 @@ namespace Pha3z.FrichText
             };
         }
 
-        public static void DoRecursiveParse(string txt, RefList<TextSpan> spans, int iToken, int position, int stopParsingAt)
+        static void DoRecursiveParse(string txt, RefList<TextSpan> spans, int iToken, int position, int stopParsingAt)
         {
             for (int i = position; i < stopParsingAt - 1; i++)
             {
@@ -48,7 +48,7 @@ namespace Pha3z.FrichText
 
         /// <summary></summary>
         /// <returns>The closing bracket position.</returns>
-        public static int ParseSpanToken(string frichText, int openingBracketPos, RefList<TextSpan> spans)
+        static int ParseSpanToken(string frichText, int openingBracketPos, RefList<TextSpan> spans)
         {
             string txt = frichText;
             int i = openingBracketPos + 1;
@@ -112,7 +112,7 @@ namespace Pha3z.FrichText
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int FindNextClosingBracket(string txt, int openingBracket)
+        static int FindNextClosingBracket(string txt, int openingBracket)
         {
             int i = openingBracket + 2;
             while (txt[i] != ']')
@@ -127,7 +127,7 @@ namespace Pha3z.FrichText
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int FindEndOfNumber(string txt, int numberPos)
+        static int FindEndOfNumber(string txt, int numberPos)
         {
             //Colons are optional. Skip if present.
             if(txt[numberPos] == ':')
@@ -151,7 +151,7 @@ namespace Pha3z.FrichText
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsMatch(string needle, string haystack, int position)
+        static bool IsMatch(string needle, string haystack, int position)
         {
             for(int i = 0; i < needle.Length; i++)
             {
