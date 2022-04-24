@@ -3,11 +3,16 @@ A custom text format for presentation-ready formatted text that is terse and ext
 
 A FrichText string looks like the following (new-lines have been added clarity, but the format does not require new-lines to distinguish paragraphs).
 
->>>font 1: 'somefont'
->>>font 2: 'another font'
->>>font 3: 'yet another font'
->>>fs: 32
->>>lh: 48
+&gt;&gt;&gt;font 1: 'somefont'
+
+&gt;&gt;&gtfont 2: 'another font'
+
+&gt;&gt;&gtfont 3: 'yet another font'
+
+&gt;&gt;&gtfs: 32
+
+&gt;&gt;&gtlh: 48
+
 This is some text. [b u]This text is bold and underlined. [k110]This text is bold and underlined with adjusted kerning.[/][/]
 
 ## Why?
