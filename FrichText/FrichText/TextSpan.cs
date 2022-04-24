@@ -19,7 +19,14 @@ namespace Pha3z.FrichText
         /// </summary>
         public byte Kerning;
 
+        /// <summary>
+        /// The opening bracket position in original text
+        /// </summary>
         public int Start;
+
+        /// <summary>
+        /// STart + Length maps to the closing bracket position in original text
+        /// </summary>
         public int Length;
    
     }

@@ -36,7 +36,9 @@ namespace Pha3z.FrichText
             int i = openingBracketPos + 1;
             ref TextSpan s = ref spans.AddByRef();
 
-            while(i < txt.Length - 1 && txt[i] != ']')
+            s.Start = openingBracketPos;
+
+            while(i < txt.Length - 2 && txt[i] != ']')
             {
                 if (txt[i] == ']')
                     return i +1;
@@ -73,6 +75,7 @@ namespace Pha3z.FrichText
                     throw new FrichTextException("Encountered unexpected character after text: ");
             }
 
+            s.Length = i - s.Start;
             return i;
         }
 
