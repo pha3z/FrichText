@@ -5,13 +5,13 @@ A FrichText string looks like the following (new-lines have been added clarity, 
 
 &gt;&gt;&gt;font 1: 'somefont'
 
-&gt;&gt;&gtfont 2: 'another font'
+&gt;&gt;&gt;font 2: 'another font'
 
-&gt;&gt;&gtfont 3: 'yet another font'
+&gt;&gt;&gt;font 3: 'yet another font'
 
-&gt;&gt;&gtfs: 32
+&gt;&gt;&gt;fs: 32
 
-&gt;&gt;&gtlh: 48
+&gt;&gt;&gt;lh: 48
 
 This is some text. [b u]This text is bold and underlined. [k110]This text is bold and underlined with adjusted kerning.[/][/]
 
