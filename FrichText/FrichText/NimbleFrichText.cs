@@ -16,14 +16,14 @@ namespace Pha3z.FrichText
         /// <summary>
         /// NOTE: This array may contain trailing unused space. Use the LastCmdIdx property to find out the index to the last command in the array.
         /// </summary>
-        public TextCmd[] TextCmds { get; private set; }
+        public FrichTextCmd[] TextCmds { get; private set; }
         public int LastCmdIdx { get; private set; }
 
         public static NimbleFrichText ParseFrichText(string frichText, int start = 0, int length = 0 )
         {
-            RefList<TextCmd> cmds = new RefList<TextCmd>((frichText.Length / 256) + 4);
+            RefList<FrichTextCmd> cmds = new RefList<FrichTextCmd>((frichText.Length / 256) + 4);
 
-            DoRecursiveParse(frichText, cmds, iToken: 0, start, length - 1);
+            DoRecursiveParse(frichText, cmds, spanIdx: 0, start, length - 1);
 
             return new NimbleFrichText()
             {
@@ -32,44 +32,46 @@ namespace Pha3z.FrichText
             };
         }
 
-        static void DoRecursiveParse(string txt, RefList<TextCmd> cmds, int iToken, int position, int stopParsingAt)
+        static void DoRecursiveParse(string txt, RefList<FrichTextCmd> cmds, int spanIdx, int position, int stopParsingAt)
         {
-            int innerTextStart = -1;
-
+            int textSpanStart = position;
             int i = position;
             do
             {
                 if (txt[i] == '[' && txt[i + 1] != '[')
                 {
-                    int tokenStart = i;
-                    i++; //advance to first character inside token
+                    if (i > textSpanStart)
+                    {
+                        //Scoop up all plain text before the token and turn it into a text command
+                        ref FrichTextCmd cmd = ref cmds[spanIdx];
+                        cmd.Text = txt.Substring(textSpanStart, i - textSpanStart);
+                    }
+
+                    //Now process the token. Advance to first character inside token
+                    i++; 
 
                     //Skip leading whitespace
                     while (txt[i] == ' ')
                     {
                         i++;
                         if (i == stopParsingAt)
-                            throw new FrichTextException("Text ends with an improperly terminated format token.");
+                            throw new FrichTextException("Text ends with an unterminated format token.");
                     }
 
                     //Check if this is a closing token
                     if (txt[i] == '/')
                     {
-                        if (innerTextStart == -1)
-                            throw new FrichTextException("Encountered a closing format token ([/]) for which there is no matched preceeding opener token.");
-
-                        ref TextCmd cmd = ref cmds[iToken];
-                        cmd.Text = txt.Substring(innerTextStart, tokenStart - innerTextStart);
-                        innerTextStart = -1;
-                        i = FindNextClosingBracket(txt, i) + 1;
-                        iToken++;
+                        ref FrichTextCmd cmd = ref cmds.AddByRef();
+                        cmd.Kind = FrichTextCmdKind.RestorePreviousState;
+                        i = textSpanStart = FindNextClosingBracket(txt, i) + 1;
+                        spanIdx++;
                     }
                     else
                     {
-                        ref TextCmd cmd = ref cmds.AddByRef();
-                        i = innerTextStart = ParseSpanToken(txt, i, ref cmd);
-
-                        DoRecursiveParse(txt, cmds, iToken + 1, innerTextStart, stopParsingAt);
+                        ref FrichTextCmd cmd = ref cmds.AddByRef();
+                        cmd.Kind = FrichTextCmdKind.SaveStyleState; //Anytime a format token is encountered, we consider it beginning of a new style state
+                        i = textSpanStart = GenerateCmdsFromToken(txt, i, cmds);
+                        DoRecursiveParse(txt, cmds, spanIdx + 1, textSpanStart, stopParsingAt);
                     }
 
                 }
@@ -79,7 +81,7 @@ namespace Pha3z.FrichText
         /// <summary></summary>
         /// <returns>Index after the closing bracket position.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static int ParseSpanToken(string frichText, int openingBracketPos, ref TextCmd cmd)
+        static int GenerateCmdsFromToken(string frichText, int openingBracketPos, RefList<FrichTextCmd> cmds)
         {
             string txt = frichText;
             int i = openingBracketPos + 1;
@@ -92,33 +94,41 @@ namespace Pha3z.FrichText
                 if (txt[i] == ']')
                     return i + 1;
 
+                ref FrichTextCmd cmd = ref cmds.AddByRef();
+
                 if (txt[i] == 'b')
-                    cmd.Kind = TextCmdKind.Bold;
+                    cmd.Kind = FrichTextCmdKind.Bold;
                 else if (txt[i] == 'i')
-                    cmd.Kind = TextCmdKind.Italic;
+                    cmd.Kind = FrichTextCmdKind.Italic;
                 else if (txt[i] == 'u')
-                    cmd.Kind = TextCmdKind.Underline;
+                    cmd.Kind = FrichTextCmdKind.Underline;
                 else if (txt[i] == 'p')
-                    cmd.Kind = TextCmdKind.ParagraphStart;
+                    cmd.Kind = FrichTextCmdKind.ParagraphStart;
+                else if (txt[i] == '#')
+                {
+                    cmd.Kind = FrichTextCmdKind.Color;
+                    cmd.Text = IntParser.ParseFromMagicHex(txt, i + 1, 6);
+                    i = i + 6;
+                }
                 else if (txt[i] == 'f')
                 {
-                    cmd.Kind = TextCmdKind.FontIndex;
+                    cmd.Kind = FrichTextCmdKind.FontIndex;
                     int eon = FindEndOfNumber(txt, i + 1);
-                    cmd.CmdValue = (byte)IntParser.ParseInt(txt, i, eon);
+                    cmd.Value = (byte)IntParser.ParseInt(txt, i, eon);
                     i = eon;
                 }
-                else if (txt[i] == 'k')
+                else if (txt[i] == 't') //Tracking
                 {
-                    cmd.Kind = TextCmdKind.Kerning;
+                    cmd.Kind = FrichTextCmdKind.LetterSpacing;
                     int eon = FindEndOfNumber(txt, i + 1);
-                    cmd.CmdValue = (byte)IntParser.ParseInt(txt, i, eon);
+                    cmd.Value = (byte)IntParser.ParseInt(txt, i, eon);
                     i = eon;
                 }
                 else if (txt[i] == 'l' && txt[i + 1] == 'h')
                 {
-                    cmd.Kind = TextCmdKind.LineHeight;
+                    cmd.Kind = FrichTextCmdKind.LineHeight;
                     int eon = FindEndOfNumber(txt, i + 2);
-                    cmd.CmdValue = (byte)IntParser.ParseInt(txt, i, eon);
+                    cmd.Value = (byte)IntParser.ParseInt(txt, i, eon);
                     i = eon;
                 }
                 else if (!Char.IsDigit(txt[i]))
@@ -129,9 +139,9 @@ namespace Pha3z.FrichText
                 else
                 {
                     //A number preceeded by a space or appearing immediately at start of span marker should be intrepretted as font size.
-                    cmd.Kind = TextCmdKind.FontSize;
+                    cmd.Kind = FrichTextCmdKind.FontSize;
                     int eon = FindEndOfNumber(txt, i);
-                    cmd.CmdValue = (byte)IntParser.ParseInt(txt, i, eon);
+                    cmd.Value = (byte)IntParser.ParseInt(txt, i, eon);
                     i = eon;
                 }
 
