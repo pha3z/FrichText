@@ -13,7 +13,7 @@ A FrichText string looks like the following (new-lines have been added clarity, 
 
 &gt;&gt;&gt;lh: 18
 
-This is some text. [b u]This text is bold and underlined. [k110]This text is bold and underlined with adjusted kerning.[/][48 lh72]This text is font-size 48 with line-height of 72.[/][/]
+This is some text. [b u]This text is bold and underlined. [k110]This text is bold and underlined with adjusted kerning.[/][48 lh72]This text is also underlined and bold, but with unaltered kerning and a font-size 48 with line-height of 72.[/][/]
 
 ## Why?
 
