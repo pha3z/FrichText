@@ -10,6 +10,12 @@ namespace Pha3z.FrichText
     /// </summary>
     public static unsafe class IntParser
     {
+        public static int ParseHex(this string text, int start, int count)
+        {
+
+            return 0;
+        }
+
         /// <summary>
         /// If you attempt to parse text that contains non-numeric characters, you will get an invalid result.
         /// There is no check for validity or even range. Use this carefully!!
