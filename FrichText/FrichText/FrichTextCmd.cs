@@ -25,7 +25,7 @@ namespace Pha3z.FrichText
         LineHeight = 1 << 13,
         FontSize = 1 << 14,
 
-        /// <summary>Color Value is stored as a signed integer representing RGBA </summary>
+        /// <summary>Color Value is stored as a signed integer encoding ARGB </summary>
         Color = 1 << 15,
         Align = 1 << 16,
     }

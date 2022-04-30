@@ -58,9 +58,19 @@ namespace Pha3z.FrichText
         public NimbleFrichTextBuilder Color(string hex)
         {
             if (hex[0] == '#')
-                return Color(IntParser.ParseHex(hex, 1, 6));
+            {
+                if(hex.Length == 7)
+                    return Color(ColorEncoding.RRGGBBHexToARGB32(hex.AsSpan(1, 6)));
+                else
+                    return Color(ColorEncoding.RRGGBBAAHexToARGB32(hex.AsSpan(1, 6)));
+            }
             else
-                return Color(IntParser.ParseHex(hex, 0, 6));
+            {
+                if (hex.Length == 6)
+                    return Color(ColorEncoding.RRGGBBHexToARGB32(hex.AsSpan()));
+                else
+                    return Color(ColorEncoding.RRGGBBAAHexToARGB32(hex.AsSpan()));
+            }
         }
 
         public NimbleFrichTextBuilder Color(byte r, byte g, byte b, byte a)

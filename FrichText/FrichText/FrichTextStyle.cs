@@ -24,7 +24,7 @@ namespace Pha3z.FrichText
         /// <summary>
         /// Unit: Thousandths of an 'em'.  A value of 1 means 1/1000 em (relative to the font size).<br/>Zero means value not specified.
         /// </summary>
-        public byte Kerning;
+        public byte LetterSpacing;
 
         public TextStyleFlags StyleFlags;
     }
