@@ -108,9 +108,19 @@ namespace Pha3z.FrichText
                     cmd.Kind = FrichTextCmdKind.ParagraphStart;
                 else if (txt[i] == '#')
                 {
+                    int terminator = i + 1;
+                    while (i < txt.Length && txt[i] != ' ' && txt[i] != ']')
+                        terminator++;
+
+                    var len = terminator - i;
+                    if (len < 7 || len > 9)
+                        throw new FrichTextException($"# must be followed by a 6 digit or 8 digit hex color code. Got {frichText.Substring(i, len)}.");
                     cmd.Kind = FrichTextCmdKind.Color;
-                    cmd.Value = IntParser.ParseHex(txt, i + 1, 6);
-                    i = i + 6;
+                    if(len == 7)
+                        cmd.Value = ColorEncoding.RRGGBBHexToARGB32(txt.AsSpan(i + 1, 6));
+                    else
+                        cmd.Value = ColorEncoding.RRGGBBHexToARGB32(txt.AsSpan(i + 1, 8));
+                    i = i + len;
                 }
                 else if (txt[i] == 'f')
                 {

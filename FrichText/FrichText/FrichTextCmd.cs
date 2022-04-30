@@ -15,19 +15,18 @@ namespace Pha3z.FrichText
         Bold = 1 << 3,
         Italic = 1 << 4,
         Underline = 1 << 5,
-        Strikeout = 1 << 6,
-        Strikethrough = 1 << 7,
-        Superscript = 1 << 8,
-        Subscript = 1 << 9,
-        ParagraphStart = 1 << 10,
-        FontIndex = 1 << 11,
-        LetterSpacing = 1 << 12,
-        LineHeight = 1 << 13,
-        FontSize = 1 << 14,
+        Strikethrough = 1 << 6,
+        Superscript = 1 << 7,
+        Subscript = 1 << 8,
+        ParagraphStart = 1 << 9,
+        FontIndex = 1 << 10,
+        LetterSpacing = 1 << 11,
+        LineHeight = 1 << 12,
+        FontSize = 1 << 13,
 
         /// <summary>Color Value is stored as a signed integer encoding ARGB </summary>
-        Color = 1 << 15,
-        Align = 1 << 16,
+        Color = 1 << 14,
+        Align = 1 << 15,
     }
 
     [Flags]
@@ -53,5 +52,26 @@ namespace Pha3z.FrichText
         /// If the command is a text command, this is the string.
         /// </summary>
         public string Text;
+
+        public FrichTextCmd(FrichTextCmdKind kind)
+        {
+            Kind = kind;
+            Value = 0;
+            Text = null;
+        }
+
+        public FrichTextCmd(FrichTextCmdKind kind, int value)
+        {
+            Kind=kind;
+            Value = value;
+            Text = null;
+        }
+
+        public FrichTextCmd(FrichTextCmdKind kind, string text)
+        {
+            Kind = kind;
+            Value = 0;
+            Text = text;
+        }
     }
 }
