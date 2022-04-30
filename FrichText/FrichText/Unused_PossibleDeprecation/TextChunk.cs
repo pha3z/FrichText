@@ -5,7 +5,7 @@ namespace Pha3z.FrichText
     public struct TextChunk
     {
         /// <summary>
-        /// One-based index to a font in an array of fonts assigned to the whole text.<br/>Zero means value not specified.
+        /// Index to a font in an array of fonts assigned to the whole text.<br/>255 means value not specified.
         /// </summary>
         public byte FontIndex;
 

@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Pha3z.FrichText
 {
+    /*
     public struct NimbleFrichTextBuilder
     {
         RefList<FrichTextCmd> _cmds;
@@ -165,4 +166,5 @@ namespace Pha3z.FrichText
             return this;
         }
     }
+    */
 }

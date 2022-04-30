@@ -11,6 +11,7 @@ namespace Pha3z.FrichText
     /// - Set next text string
     /// - Set a font or style attribute
     /// </summary>
+    /*
     public struct NimbleFrichText
     { 
         public static FrichTextCmdBuffer ParseFrichText(string frichText, int start = 0, int length = 0 )
@@ -206,5 +207,5 @@ namespace Pha3z.FrichText
 
             return true;
         }
-    }
+    }*/
 }

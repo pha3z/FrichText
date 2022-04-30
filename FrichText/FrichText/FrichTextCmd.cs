@@ -19,7 +19,7 @@ namespace Pha3z.FrichText
         Superscript = 1 << 7,
         Subscript = 1 << 8,
         ParagraphStart = 1 << 9,
-        FontIndex = 1 << 10,
+        FontFamilyIndex = 1 << 10,
         LetterSpacing = 1 << 11,
         LineHeight = 1 << 12,
         FontSize = 1 << 13,
@@ -44,34 +44,21 @@ namespace Pha3z.FrichText
 
         /// <summary>
         /// If the command requires a numeric value as its parameter, this is the value.<br/><br/>
-        /// Bit values for Alignment are defined in TextAlign enum
+        /// Bit values for Alignment are defined in TextAlign enum<br/>
+        /// If Kind is a Text commmand, Value is an index into a seperate string[] acting as a Text buffer.
         /// </summary>
         public int Value;
-
-        /// <summary>
-        /// If the command is a text command, this is the string.
-        /// </summary>
-        public string Text;
 
         public FrichTextCmd(FrichTextCmdKind kind)
         {
             Kind = kind;
             Value = 0;
-            Text = null;
         }
 
         public FrichTextCmd(FrichTextCmdKind kind, int value)
         {
             Kind=kind;
             Value = value;
-            Text = null;
-        }
-
-        public FrichTextCmd(FrichTextCmdKind kind, string text)
-        {
-            Kind = kind;
-            Value = 0;
-            Text = text;
         }
     }
 }
