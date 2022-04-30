@@ -12,26 +12,17 @@ namespace Pha3z.FrichText
     /// - Set a font or style attribute
     /// </summary>
     public struct NimbleFrichText
-    {
-        /// <summary>
-        /// NOTE: This array may contain trailing unused space. Use the LastCmdIdx property to find out the index to the last command in the array.
-        /// </summary>
-        public FrichTextCmd[] TextCmds { get; private set; }
-        public int CmdCount { get; private set; }
-
-        public NimbleFrichText(FrichTextCmd[] cmds, int cmdCnt)
-        {
-            TextCmds = cmds;
-            CmdCount = cmdCnt;
-        }
-
-        public static NimbleFrichText ParseFrichText(string frichText, int start = 0, int length = 0 )
+    { 
+        public static FrichTextCmdBuffer ParseFrichText(string frichText, int start = 0, int length = 0 )
         {
             RefList<FrichTextCmd> cmds = new RefList<FrichTextCmd>((frichText.Length / 256) + 4);
 
             DoRecursiveParse(frichText, cmds, spanIdx: 0, start, length - 1);
 
-            return new NimbleFrichText(cmds.Items, cmds.Count);
+            if (cmds.Count > ushort.MaxValue)
+                throw new Exception($"FrichTextCmdBuffer size exceeded.  Max Cmd Count: {ushort.MaxValue}");
+
+            return new FrichTextCmdBuffer(cmds.Items, (ushort)cmds.Count);
         }
 
         static void DoRecursiveParse(string txt, RefList<FrichTextCmd> cmds, int spanIdx, int position, int stopParsingAt)
