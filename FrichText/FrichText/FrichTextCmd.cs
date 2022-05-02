@@ -3,39 +3,48 @@
 namespace Pha3z.FrichText
 {
     [Flags]
-    public enum FrichTextCmdKind : int
+    public enum FrichTextCmdKind : short
     {
         SaveStyleState = 0,
         RestorePreviousState = 1,
-        /// <summary>
-        /// Cmds that invoke a simple on/off style such as "Bold" or "Italic" will turn style ON by default. If TURN_STYLE_OFF is on, then the style is turned off.
-        /// </summary>
-        TURN_STYLE_OFF = 1 << 1,
-        Text = 1 << 2,
-        Bold = 1 << 3,
-        Italic = 1 << 4,
-        Underline = 1 << 5,
-        Strikethrough = 1 << 6,
-        Superscript = 1 << 7,
-        Subscript = 1 << 8,
-        ParagraphStart = 1 << 9,
-        FontFamilyIndex = 1 << 10,
-        LetterSpacing = 1 << 11,
-        LineHeight = 1 << 12,
-        FontSize = 1 << 13,
+        Text = 1 << 1,
+        Weight = 1 << 2,
+        Italic = 1 << 3,
+        Underline = 1 << 4,
+        Strikethrough = 1 << 5,
+        Superscript = 1 << 6,
+        Subscript = 1 << 7,
+        ParagraphStart = 1 << 8,
+        FontFamilyIndex = 1 << 9,
+        LetterSpacing = 1 << 10,
+        LineHeight = 1 << 11,
+        FontSize = 1 << 12,
 
         /// <summary>Color Value is stored as a signed integer encoding ARGB </summary>
-        Color = 1 << 14,
-        Align = 1 << 15,
+        Color = 1 << 13,
+        Align = 1 << 14,
     }
 
     [Flags]
     public enum TextAlign : byte
     {
-        LEFT = 1,
-        RIGHT = 2,
-        CENTER = 4,
-        JUSTIFY = 8,
+        LEFT = 0,
+        RIGHT = 1,
+        CENTER = 1 << 1,
+        JUSTIFY = 1 << 2,
+        TOP = 1 << 3,
+        MIDDLE = 1 << 4,
+        BOTTOM = 1 << 5,
+
+        TOP_LEFT = TOP | LEFT,
+        TOP_CENTER = TOP | CENTER,
+        TOP_RIGHT = TOP | RIGHT,
+        MIDDLE_LEFT = MIDDLE | LEFT,
+        MIDDLE_CENTER = MIDDLE | CENTER,
+        MIDDLE_RIGHT = MIDDLE | RIGHT,
+        BOTTOM_LEFT = BOTTOM | LEFT,
+        BOTTOM_CENTER = BOTTOM | CENTER,
+        BOTTOM_RIGHT = BOTTOM | RIGHT,
     }
 
     public struct FrichTextCmd
@@ -45,7 +54,8 @@ namespace Pha3z.FrichText
         /// <summary>
         /// If the command requires a numeric value as its parameter, this is the value.<br/><br/>
         /// Bit values for Alignment are defined in TextAlign enum<br/>
-        /// If Kind is a Text commmand, Value is an index into a seperate string[] acting as a Text buffer.
+        /// For Text Kind, Value is an index into a seperate string[] acting as a Text buffer.<br/>
+        /// For Kind Weight, Value is 1 to 9
         /// </summary>
         public int Value;
 
